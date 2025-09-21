@@ -44,6 +44,12 @@ class QuizViewModel : ViewModel() {
     private val _highestStreak = MutableLiveData<Int>()
     val highestStreak: LiveData<Int> = _highestStreak
 
+    private val _isQuizCompleted = MutableLiveData<Boolean>()
+    val isQuizCompleted: LiveData<Boolean> = _isQuizCompleted
+
+    private val _answerFeedback = MutableLiveData<String?>()
+    val answerFeedback: LiveData<String?> = _answerFeedback
+
     init {
         _currentQuestionIndex.value = 0
         _selectedAnswer.value = null
@@ -52,6 +58,8 @@ class QuizViewModel : ViewModel() {
         _streak.value = 0
         _streakMessage.value = null
         _highestStreak.value = 0
+        _isQuizCompleted.value = false
+        _answerFeedback.value = null
     }
 
     fun fetchQuestions() {
@@ -81,6 +89,12 @@ class QuizViewModel : ViewModel() {
         // Check if answer is correct
         val currentQuestion = _questions.value?.get(_currentQuestionIndex.value ?: 0)
         val isCorrect = answerIndex == currentQuestion?.correctOptionIndex
+
+        _answerFeedback.value = if (isCorrect) {
+            "Correct! 🎉"
+        } else {
+            "Incorrect! The correct answer was: ${currentQuestion?.options?.get(currentQuestion.correctOptionIndex)}"
+        }
         
         if (isCorrect) {
             _score.value = (_score.value ?: 0) + 1
@@ -123,7 +137,12 @@ class QuizViewModel : ViewModel() {
             _selectedAnswer.value = null
             _showAnswer.value = false
             _streakMessage.value = null // Clear streak message when moving to next question
+            _answerFeedback.value = null // Clear feedback message
             Log.d(TAG, "Moving to next question, clearing streak message")
+        } else {
+            // Quiz completed
+            _isQuizCompleted.value = true
+            Log.d(TAG, "Quiz completed!")
         }
     }
 
@@ -131,14 +150,15 @@ class QuizViewModel : ViewModel() {
         nextQuestion()
     }
 
-    fun getCurrentQuestion(): Question? {
-        val index = _currentQuestionIndex.value ?: 0
-        return _questions.value?.getOrNull(index)
-    }
-
-    fun isLastQuestion(): Boolean {
-        val currentIndex = _currentQuestionIndex.value ?: 0
-        val totalQuestions = _questions.value?.size ?: 0
-        return currentIndex >= totalQuestions - 1
+    fun restartQuiz() {
+        _currentQuestionIndex.value = 0
+        _selectedAnswer.value = null
+        _showAnswer.value = false
+        _score.value = 0
+        _streak.value = 0
+        _streakMessage.value = null
+        _isQuizCompleted.value = false
+        _answerFeedback.value = null
+        Log.d(TAG, "Quiz restarted")
     }
 }
