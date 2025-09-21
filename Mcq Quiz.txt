@@ -1,0 +1,50 @@
+Mcq Quiz
+
+Assignment: Build a Quiz App Using Provided JSON
+
+Overview
+Youʼre given a gist of 10 questions in API Question Json List 
+Link : https://gist.githubusercontent.com/dr-samrat/53846277a8fcb034e482906ccc0d12b2/raw
+
+Build an Android app that:
+
+1) Launch & Load
+    On launch, parse the JSON into a List<Question>.
+    Show a brief splash or loading indicator while you prepare data.
+2) Quiz FlowQuestion Screen
+    Display the current question (text + four options).
+    Tapping an option, reveals the right answer and user selectedanswer.
+    Then after 2 seconds, it immediately advances to the next question.
+    Tapping “Skipˮ ad vances immediately to the next question.
+     Streak LogicTrack consecutive correct answers.When the streak count hits 3, 
+     streak badge lights up.
+     Think creative way to engage user.
+     Any wrong answer resets the streak counter to 0
+     
+3) End of Quiz
+    After the 10th question, transition to a Results Screen that shows:
+    Results as per design elements
+    Correct/Total
+    Optional: Skipped questions
+    Your longest streak achieved
+    
+    Options on Results Screen:
+        Restart Quiz: reset all counters and go back to Question 1.
+
+4) Design
+    Inspiration
+    The below are the inspirations. Its not important to follow the below design, any creative functional solution is acceptable.
+
+
+
+    
+5) Deliverables
+    Git repo Full Android Studio running functional project
+    Readme.md : that list your implementation clearly.
+    Non Functional Requirements
+    Beautify the user experience by adding Animations, Gestures (e.g.swipe right to navigate question during test) etc
+    Implement your solution with clear separation of UI, state, and datalayers.
+    Consistent design (colors, typography, spacing).
+    Use material components and follow accessibility best practices.
+    The shared design is just a reference  Not a constraint!
+    Feel free to reimagine the solution and go with what you believe delivers the best userexperience.
