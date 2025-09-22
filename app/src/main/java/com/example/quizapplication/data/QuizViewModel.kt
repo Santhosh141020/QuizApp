@@ -22,7 +22,6 @@ class QuizViewModel : ViewModel() {
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> = _error
 
-    // Quiz state management
     private val _currentQuestionIndex = MutableLiveData<Int>()
     val currentQuestionIndex: LiveData<Int> = _currentQuestionIndex
 
@@ -60,6 +59,7 @@ class QuizViewModel : ViewModel() {
         _highestStreak.value = 0
         _isQuizCompleted.value = false
         _answerFeedback.value = null
+        fetchQuestions()
     }
 
     fun fetchQuestions() {
@@ -101,13 +101,11 @@ class QuizViewModel : ViewModel() {
             val newStreak = (_streak.value ?: 0) + 1
             _streak.value = newStreak
             
-            // Update highest streak
             val currentHighest = _highestStreak.value ?: 0
             if (newStreak > currentHighest) {
                 _highestStreak.value = newStreak
             }
             
-            // Check for streak achievements
             checkStreakAchievement(newStreak)
         } else {
             _streak.value = 0
@@ -118,12 +116,12 @@ class QuizViewModel : ViewModel() {
     }
 
     private fun checkStreakAchievement(streak: Int) {
-        when (streak) {
-            3 -> _streakMessage.value = "3 questions streak achieved !!"
-            5 -> _streakMessage.value = "5 questions streak achieved !!"
-            7 -> _streakMessage.value = "7 questions streak achieved !!"
-            10 -> _streakMessage.value = "Perfect! 10 questions streak achieved !!"
-            else -> _streakMessage.value = null
+        if(streak == 10) {
+            _streakMessage.value = "Perfect! 10 questions streak achieved !!"
+        } else if(streak >= 3) {
+            _streakMessage.value = "$streak questions streak achieved !!"
+        } else {
+            _streakMessage.value = null
         }
         Log.d(TAG, "Streak achievement check: streak=$streak, message=${_streakMessage.value}")
     }
@@ -136,11 +134,9 @@ class QuizViewModel : ViewModel() {
             _currentQuestionIndex.value = currentIndex + 1
             _selectedAnswer.value = null
             _showAnswer.value = false
-            _streakMessage.value = null // Clear streak message when moving to next question
-            _answerFeedback.value = null // Clear feedback message
+            _answerFeedback.value = null
             Log.d(TAG, "Moving to next question, clearing streak message")
         } else {
-            // Quiz completed
             _isQuizCompleted.value = true
             Log.d(TAG, "Quiz completed!")
         }

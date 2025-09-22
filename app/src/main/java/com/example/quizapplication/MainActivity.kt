@@ -2,7 +2,6 @@ package com.example.quizapplication
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,15 +13,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.mutableStateOf
@@ -42,18 +36,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -71,6 +62,8 @@ import com.example.quizapplication.ui.theme.FeedbackRedLight
 import com.example.quizapplication.ui.theme.FeedbackGreenDark
 import com.example.quizapplication.ui.theme.FeedbackRedDark
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.quizapplication.data.Question
 
@@ -92,7 +85,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Observe questions
         viewModel.questions.observe(this) { questions ->
             questions?.forEach { question ->
                 Log.i(TAG, "Question ${question.id}: ${question.question}")
@@ -103,21 +95,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        // Observe loading state
-        viewModel.isLoading.observe(this) { isLoading ->
-            Log.d(TAG, "Loading state: $isLoading")
-        }
-
-        // Observe errors
-        viewModel.error.observe(this) { error ->
-            error?.let {
-                Log.e(TAG, "Error: $it")
-            }
-        }
-
         Log.d(TAG, "Starting to fetch questions...")
-        viewModel.fetchQuestions()
-
     }
 }
 
@@ -380,7 +358,6 @@ fun QuestionCard(
                 ) {
                     AnswerButton(
                         text = option,
-                        index = index,
                         isSelected = selectedAnswer == index,
                         isCorrect = index == question.correctOptionIndex,
                         showAnswer = showAnswer,
@@ -395,7 +372,6 @@ fun QuestionCard(
 @Composable
 fun AnswerButton(
     text: String,
-    index: Int,
     isSelected: Boolean,
     isCorrect: Boolean,
     showAnswer: Boolean,
@@ -403,8 +379,7 @@ fun AnswerButton(
     modifier: Modifier = Modifier
 ) {
     var isPressed by remember { mutableStateOf(false) }
-    val isDarkTheme = isSystemInDarkTheme()
-    
+
     val scale by animateFloatAsState(
         targetValue = if (isPressed) 0.95f else 1f,
         animationSpec = spring(dampingRatio = 0.6f),
@@ -548,27 +523,23 @@ fun ResultsScreen(
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
                         text = "Your Score",
+                        modifier = Modifier.fillMaxWidth(),
                         style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
                     )
-                    
+
                     Spacer(modifier = Modifier.height(8.dp))
-                    
+
                     Text(
                         text = "${animatedScore.toInt()} / $totalQuestions",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
-                    )
-                    
-                    Text(
-                        text = "$percentage%",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
             }
